@@ -14,7 +14,7 @@ int main (int argc,char* argv[] )
 	if (argc == 3 )
 	{
 		int i,status,y,k, fd[N][2];
-		printf("N is : %d, Parent Process Id: %d\n",N,getpid() );
+		//printf("N is : %d, Parent Process Id: %d\n",N,getpid() );
 		for (k = 0; k< N ;k++)
 		{
 			pipe(fd[k]);
@@ -26,17 +26,45 @@ int main (int argc,char* argv[] )
 			{	/* CHILD*/
 				char* buf[1024];
 				close(fd[i][1]);
-				//dup2(0,fd[i][0]);
+				dup2(fd[i][0],0);
 				int childcounter  = counter/N;
-				for (int t = 0;t<childcounter+1;t++){
-					read(fd[i][0],buf,1024);
-					char* args[] = {"./WC_Mapper","< ../input/input.txt", NULL };
-					execv("./WC_Mapper",args);
-					printf("process %d, childcount = %d,counter = %d,counter / N = %d string in child: %s \n",getpid(),childcounter,counter,counter/N,buf );
+			//	printf("counter = %d / N = %d = %d \n",counter,N,childcounter );
+				if (counter % N == 0){
+					if (childcounter == 0 && counter ==0)
+						{
+				//			printf("expexted case, pid = %d \n", getpid() );
+							for (int t = 0; t < 2 ; t++){
+							char* args[] = {"./WC_Mapper",NULL  };
+							execv("./WC_Mapper",args);
+						}
+							//exit(1);
+						}
+						else{
+							for (int t = 0;t<childcounter;t++){
+							char* args[] = {"./WC_Mapper",NULL /*,"< ../input/input.txt", NULL*/ };
+							execv("./WC_Mapper",args);
+						}
 					}
+				}
+				else {
+					if (i<(counter - N)){
+						for (int t = 0;t<childcounter+1;t++){
+							char* args[] = {"./WC_Mapper",NULL /*,"< ../input/input.txt", NULL*/ };
+							execv("./WC_Mapper",args);
+						}
+					}
+					else{
+						for (int t = 0;t<childcounter;t++){
+							char* args[] = {"./WC_Mapper",NULL /*,"< ../input/input.txt", NULL*/ };
+							execv("./WC_Mapper",args);
+							}
+						}
+					}
+
 				close(fd[i][0]);
 				exit(0);
 			}
+
 			else{
 				/*PARENT*/
 				close(fd[0][0]);
@@ -48,9 +76,8 @@ int main (int argc,char* argv[] )
 					write(fd[childcount][1],buf,1024);
 					childcount++;
 					childcount = childcount % N ;
+					//printf("buf = %s\n",buf );
 					memset(buf,0,sizeof buf);
-				//	printf("childcount = %d \n", childcount);
-				
 				}
 				waitpid(y,&status,WEXITED);
 				close(fd[0][1]);
@@ -59,7 +86,7 @@ int main (int argc,char* argv[] )
 	}
 	else if (argc == 4)
 	{
-		printf("this should be a mapReduce model\n");
+		//printf("this should be a mapReduce model\n");
 	}
 	return 0;
 }

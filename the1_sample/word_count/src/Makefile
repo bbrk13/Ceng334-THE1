@@ -14,6 +14,8 @@ mapreduce:
 	gcc mapreduce.c -o mapreduce
 
 clean:
-	rm -f *.o && rm mapreduce
+	rm -f *.o 
+	rm mapreduce  
+	rm Log*
 berk:
 	./mapreduce 5 WC_Mapper < ../input/input.txt
