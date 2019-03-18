@@ -21,13 +21,14 @@ wc_t words[1024];
 int main(int argc, const char * argv[]) {
     char line[256];
     char *word;
-    /*stringstream ss;
+   /* burayı actim*/
+    stringstream ss;
     ss << getpid();
     string s = "Log_Mapper" + ss.str() + ".txt";
     ofstream os(s.c_str());
-    */
+    /* buraya kadar */
     while(readInput(line, 0, 256) > 0) {
-        //os << "Received: " << line << endl;
+        os << "Received: " << line << endl; /* sadece bu satir */
         word = strtok(line, " \n");
         while(word != NULL) {
             incWordCount(word, 1, words);
@@ -40,10 +41,10 @@ int main(int argc, const char * argv[]) {
             break;
         }
         
-        //os << "Sent: " << words[i].word << " " << words[i].count << endl;
+        os << "Sent: " << words[i].word << " " << words[i].count << endl; /* sadece bu satir */
         cout << words[i].word << " " << words[i].count << endl;
     }
     
-    //os.close();
+    os.close();   /* sadece bu satir */
     return 0;
 }
